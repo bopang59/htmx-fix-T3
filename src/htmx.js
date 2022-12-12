@@ -3374,7 +3374,9 @@ return (function () {
             var element = getDocument().querySelector('meta[name="htmx-config"]');
             if (element) {
                 // @ts-ignore
-                return parseJSON(element.content);
+                var obj = parse_data(element.content);
+                return obj;
+                //return parseJSON(element.content);
             } else {
                 return null;
             }
