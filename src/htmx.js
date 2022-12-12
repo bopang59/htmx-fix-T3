@@ -3331,6 +3331,44 @@ return (function () {
                     </style>");
             }
         }
+            
+        function convert_syntax(key_val) { //convert history-enabled in kebab-case syntax to historyEnabled in Camel
+             var j = 0;
+             for (; j < key_val.length; j++) {
+                 if (key_val[j] == '-') {
+                     key_val = key_val.substring(0, j + 1) + key_val[j + 1].toUpperCase() + key_val.substring(j + 2);
+                 }
+             }
+             key_val = key_val.replaceAll('-', '');
+             return key_val;
+         }
+         
+         function parse_data(jString) {
+             //Convert JSON object: {"historyEnabled":false,"defaultSettleDelay":0} to  
+             //To javascript object: “historyEnabled = false, defaultSettleDelay = 0”
+             const object = {};
+             var key, val = "";
+             var sub = jString.split(' ');
+             var len = sub.length;
+             var i;
+             for (i = 0; i < len - 1; i++) {
+                 var curr = sub[i];
+                 key = curr.substring(0, curr.indexOf("="));
+                 key = convert_syntax(key);
+                 val = curr.substring(curr.indexOf("=") + 1, curr.indexOf(","));
+                 val = convert_syntax(val);
+                 object[key] = val;
+                 key = "";
+                 val = "";
+             }
+             var curr = sub[len - 1];
+             key = curr.substring(0, curr.indexOf("="));
+             key = convert_syntax(key);
+             val = curr.substring(curr.indexOf("=") + 1, curr.length);
+             val = convert_syntax(val);
+             object[key] = val;
+             return object;
+         }
 
         function getMetaConfig() {
             var element = getDocument().querySelector('meta[name="htmx-config"]');
